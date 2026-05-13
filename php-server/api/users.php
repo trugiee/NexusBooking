@@ -17,6 +17,25 @@ function sendStatusEmail(string $toEmail, string $name, string $status): void {
     sendSMTPEmail($toEmail, $subject, $message);
 }
 
+function sendStaffWelcomeEmail(string $toEmail, string $name, string $role, string $password): void {
+    $roleName = ucfirst($role);
+    $subject  = "Welcome to NEXUS7101 — Your Staff Account is Ready";
+    $message  = "Hi {$name},\n\n"
+              . "You have been added as a {$roleName} on the NEXUS7101 Website Booking System.\n\n"
+              . "Here are your login credentials:\n"
+              . "----------------------------------------\n"
+              . "  Login URL : http://localhost:5180\n"
+              . "  Email     : {$toEmail}\n"
+              . "  Password  : {$password}\n"
+              . "----------------------------------------\n\n"
+              . "Please log in and change your password immediately for security.\n\n"
+              . "If you have any questions, contact the administrator.\n\n"
+              . "Best regards,\n"
+              . "NEXUS7101 Admin Team";
+
+    sendSMTPEmail($toEmail, $subject, $message);
+}
+
 function handleUsers(string $method, array $segments): void {
     $db   = getDB();
     $body = json_decode(file_get_contents('php://input'), true) ?? [];
@@ -44,6 +63,10 @@ function handleUsers(string $method, array $segments): void {
             $stmt = $db->prepare('INSERT INTO users (name,email,password,role,phone,avatar) VALUES (?,?,?,?,?,?)');
             $stmt->execute([$name, $email, $hash, $role, $phone, $avatar]);
             $id = $db->lastInsertId();
+
+            // Send welcome email with credentials
+            sendStaffWelcomeEmail($email, $name, $role, $password);
+
             echo json_encode(['id' => $id, 'name' => $name, 'email' => $email, 'role' => $role, 'phone' => $phone]);
         } catch (PDOException $e) {
             http_response_code(400);
@@ -71,6 +94,38 @@ function handleUsers(string $method, array $segments): void {
         $db->prepare('UPDATE users SET status = ? WHERE id = ?')->execute([$status, $id]);
         sendStatusEmail($user['email'], $user['name'], $status);
         echo json_encode(['message' => 'Status updated']);
+        return;
+    }
+
+    // PUT /api/users/profile — update own profile
+    if ($method === 'PUT' && count($segments) === 1 && $segments[0] === 'profile') {
+        $user = requireAuth();
+        $id = $user['id'];
+        $email = trim($body['email'] ?? '');
+        $name = trim($body['name'] ?? '');
+        $phone = trim($body['phone'] ?? '');
+        $password = trim($body['password'] ?? '');
+
+        if (empty($email) || empty($name)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Email and Name are required']);
+            return;
+        }
+
+        try {
+            if (!empty($password)) {
+                $hash = password_hash($password, PASSWORD_BCRYPT);
+                $stmt = $db->prepare('UPDATE users SET email = ?, name = ?, phone = ?, password = ? WHERE id = ?');
+                $stmt->execute([$email, $name, $phone, $hash, $id]);
+            } else {
+                $stmt = $db->prepare('UPDATE users SET email = ?, name = ?, phone = ? WHERE id = ?');
+                $stmt->execute([$email, $name, $phone, $id]);
+            }
+            echo json_encode(['message' => 'Profile updated successfully']);
+        } catch (PDOException $e) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Email already exists or update failed']);
+        }
         return;
     }
 

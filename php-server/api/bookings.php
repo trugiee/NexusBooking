@@ -14,10 +14,11 @@ function handleBookings(string $method, array $segments): void {
 
     // GET /api/bookings
     if ($method === 'GET' && empty($segments)) {
-        if ($user['role'] === 'admin') {
-            $rows = $db->query('SELECT * FROM bookings')->fetchAll();
+        if ($user['role'] === 'admin' || $user['role'] === 'inspector') {
+            $stmt = $db->query('SELECT b.*, u.name as userName FROM bookings b LEFT JOIN users u ON b.userId = u.id ORDER BY b.created_at DESC');
+            $rows = $stmt->fetchAll();
         } else {
-            $stmt = $db->prepare('SELECT * FROM bookings WHERE userId = ?');
+            $stmt = $db->prepare('SELECT b.*, u.name as userName FROM bookings b LEFT JOIN users u ON b.userId = u.id WHERE b.userId = ? ORDER BY b.created_at DESC');
             $stmt->execute([$user['id']]);
             $rows = $stmt->fetchAll();
         }
@@ -37,10 +38,11 @@ function handleBookings(string $method, array $segments): void {
         $total         = (int)   ($body['total']          ?? 0);
         $paymentMethod = trim(    $body['paymentMethod']  ?? '');
         $gcashRef      = trim(    $body['gcashRef']       ?? '');
+        $walkinName    = trim(    $body['walkinName']     ?? '');
 
-        // Conflict check — only block if already CONFIRMED
-        $conflict = $db->prepare('SELECT id FROM bookings WHERE cottageId = ? AND date = ? AND status = ?');
-        $conflict->execute([$cottageId, $date, 'Confirmed']);
+        // Conflict check — block if NOT Cancelled or Expired (Hold Pending & Confirmed)
+        $conflict = $db->prepare("SELECT id FROM bookings WHERE cottageId = ? AND date = ? AND status NOT IN ('Cancelled', 'Expired')");
+        $conflict->execute([$cottageId, $date]);
         if ($conflict->fetch()) {
             http_response_code(400);
             echo json_encode(['error' => 'Cottage is already booked/confirmed for this date']);
@@ -48,9 +50,24 @@ function handleBookings(string $method, array $segments): void {
         }
 
         $id = 'TRX-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 7));
-        $stmt = $db->prepare('INSERT INTO bookings (id,userId,cottageId,date,addons,total,paymentMethod,gcashRef) VALUES (?,?,?,?,?,?,?,?)');
-        $stmt->execute([$id, $user['id'], $cottageId, $date, implode(',', $addons), $total, $paymentMethod, $gcashRef ?: null]);
-        echo json_encode(['id' => $id, 'status' => 'Pending']);
+        $status = $walkinName ? 'Confirmed' : 'Pending';
+        
+        $stmt = $db->prepare('INSERT INTO bookings (id,userId,cottageId,date,addons,total,paymentMethod,gcashRef,walkin_name,status,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)');
+        $stmt->execute([
+            $id, 
+            $user['id'], 
+            $cottageId, 
+            $date, 
+            implode(',', $addons), 
+            $total, 
+            $paymentMethod, 
+            $gcashRef ?: null,
+            $walkinName ?: null,
+            $status,
+            date('Y-m-d H:i:s')
+        ]);
+        
+        echo json_encode(['id' => $id, 'status' => $status]);
         return;
     }
 
@@ -61,13 +78,26 @@ function handleBookings(string $method, array $segments): void {
         $booking->execute([$id]);
         $booking = $booking->fetch();
 
-        if (!$booking || $booking['userId'] != $user['id']) {
+        if (!$booking) {
             http_response_code(404);
             echo json_encode(['error' => 'Booking not found']);
             return;
         }
 
-        // Final conflict check before confirming
+        if ($booking['status'] === 'Expired') {
+            http_response_code(400);
+            echo json_encode(['error' => 'This reservation has expired (3-day limit exceeded) and cannot be confirmed.']);
+            return;
+        }
+
+        // ONLY ALLOW ADMIN (City Hall) to verify cash payments
+        if ($user['role'] !== 'admin' && $booking['userId'] != $user['id']) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Only administrators can confirm cash payments']);
+            return;
+        }
+
+        // Final conflict check before confirming (Ensure no other CONFIRMED booking exists)
         $conflict = $db->prepare('SELECT id FROM bookings WHERE cottageId = ? AND date = ? AND status = ? AND id != ?');
         $conflict->execute([$booking['cottageId'], $booking['date'], 'Confirmed', $id]);
         if ($conflict->fetch()) {

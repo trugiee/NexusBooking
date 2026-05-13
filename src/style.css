@@ -2,8 +2,11 @@
 @import "tailwindcss";
 
 :root {
-  --glass: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --primary: #000000;
+  --accent: #10b981; 
+  --bg: #ffffff;
 }
 
 * {
@@ -12,12 +15,17 @@
 
 body {
   margin: 0;
+  background-color: var(--bg);
+  min-height: 100vh;
+  color: var(--primary);
+}
+
+/* Landing Page Specific Background */
+body.landing-page {
   background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('/src/assets/main-bg.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  min-height: 100vh;
-  color: #0f172a;
 }
 
 #app {
@@ -25,43 +33,54 @@ body {
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--glass);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--glass-border);
 }
 
 .input-field {
   width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #fdfdfd;
+  border: 2px solid #f0f0f0;
   padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   font-weight: 500;
   transition: all 0.2s ease;
   outline: none;
 }
 
 .input-field:focus {
-  border-color: #0f172a;
+  border-color: var(--primary);
   background: white;
-  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.05);
 }
 
 .btn-primary {
-  background: #0f172a;
+  background: var(--primary);
   color: white;
-  font-weight: 600;
+  font-weight: 800;
   padding: 1rem 1.5rem;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   transition: all 0.2s ease;
   border: none;
   cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+}
+
+/* Restore Landing Page Button Style */
+.landing-page .btn-primary {
+  background: #0f172a;
+}
+.landing-page .btn-primary:hover {
+  background: #1e293b;
+  transform: translateY(-2px);
 }
 
 .btn-primary:hover {
-  background: #1e293b;
-  transform: translateY(-1px);
+  background: var(--accent);
+  transform: translateY(-2px);
 }
 
 .btn-primary:active {
@@ -78,23 +97,12 @@ body {
   to { opacity: 1; transform: scale(1); }
 }
 
-@keyframes scan-line {
-  0% { top: 0; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
-}
-
 .animate-fade-in {
   animation: fade-in 0.4s ease-out forwards;
 }
 
 .animate-scale-up {
   animation: scale-up 0.3s ease-out forwards;
-}
-
-.animate-scan-line {
-  animation: scan-line 2s linear infinite;
 }
 
 /* Auth Sliding Classes */
@@ -132,7 +140,6 @@ body {
   background: #f1f5f9;
   border-radius: 10px;
 }
-
 
 ::-webkit-scrollbar-thumb:hover {
   background: #e2e8f0;

@@ -56,25 +56,30 @@ function getDB(): PDO {
         );
     ");
 
-    // Migration: ensure id_photo column exists
+    // ---------- AUTO-EXPIRY (3 DAYS) ----------
+    $pdo->exec("UPDATE bookings SET status = 'Expired' WHERE status = 'Pending' AND created_at < datetime('now', '-3 days')");
+
+    // Migrations
     try {
         $pdo->exec("ALTER TABLE users ADD COLUMN id_photo TEXT");
-    } catch (PDOException $e) {
-        // Column already exists, ignore
-    }
+    } catch (PDOException $e) {}
+
+    try {
+        $pdo->exec("ALTER TABLE bookings ADD COLUMN walkin_name TEXT");
+    } catch (PDOException $e) {}
+
+    try {
+        $pdo->exec("ALTER TABLE bookings ADD COLUMN created_at DATETIME");
+    } catch (PDOException $e) {}
 
     // ---------- SEED USERS ----------
     $userCount = $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
     $hash = password_hash('password', PASSWORD_BCRYPT);
     if ($userCount == 0) {
-        $stmt = $pdo->prepare('INSERT INTO users (name,email,password,role,avatar) VALUES (?,?,?,?,?)');
-        $stmt->execute(['Alice Smith',  'customer@example.com',  $hash, 'customer',  'https://i.pravatar.cc/150?u=alice']);
-        $stmt->execute(['Bob Wilson',   'admin@example.com',     $hash, 'admin',     'https://i.pravatar.cc/150?u=bob']);
-        $stmt->execute(['Guard Juan',   'inspector@example.com', $hash, 'inspector', 'https://i.pravatar.cc/150?u=juan']);
-    } else {
-        // Force reset passwords for default accounts to ensure they work
-        $pdo->prepare('UPDATE users SET password = ? WHERE email IN (?,?,?)')
-            ->execute([$hash, 'admin@example.com', 'customer@example.com', 'inspector@example.com']);
+        $stmt = $pdo->prepare('INSERT INTO users (name,email,password,role) VALUES (?,?,?,?)');
+        $stmt->execute(['Alice Smith',  'customer@example.com',  $hash, 'customer']);
+        $stmt->execute(['Bob Wilson',   'admin@example.com',     $hash, 'admin']);
+        $stmt->execute(['Guard Juan',   'inspector@example.com', $hash, 'inspector']);
     }
 
     // ---------- SEED ADD-ONS ----------

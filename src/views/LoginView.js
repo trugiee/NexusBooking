@@ -5,6 +5,8 @@ import { auth } from '../api.js';
 let activePanel = 'login'; 
 
 export function renderLogin() {
+  document.body.classList.add('landing-page');
+  const activePanel = state.loginPanel || 'login';
   return `
     <div class="min-h-screen bg-transparent flex items-center justify-center p-4 md:p-12 overflow-y-auto">
 
@@ -15,10 +17,10 @@ export function renderLogin() {
           <form id="signupForm" class="min-h-full flex flex-col justify-center px-8 md:px-12 space-y-3 overflow-y-auto py-10">
             <!-- Mobile App Title -->
             <div class="md:hidden flex items-center gap-2 mb-4">
-              <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+              <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center overflow-hidden border border-slate-100">
+                <img src="/logo.png" class="w-full h-full object-cover p-1">
               </div>
-              <h1 class="text-xl font-black text-slate-900 tracking-tighter italic">CottageEase</h1>
+              <h1 class="text-xl font-black text-slate-900 tracking-tighter uppercase italic">NEXUS<span class="text-slate-400">7101</span></h1>
             </div>
 
             <h2 class="text-3xl font-black text-slate-900 mb-1">Create Account</h2>
@@ -63,10 +65,10 @@ export function renderLogin() {
           <form id="loginForm" class="min-h-full flex flex-col justify-center px-8 md:px-12 space-y-6 overflow-y-auto py-10">
             <!-- Mobile App Title -->
             <div class="md:hidden flex items-center gap-2 mb-2">
-              <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+              <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center overflow-hidden border border-slate-100">
+                <img src="/logo.png" class="w-full h-full object-cover p-1">
               </div>
-              <h1 class="text-xl font-black text-slate-900 tracking-tighter italic">CottageEase</h1>
+              <h1 class="text-xl font-black text-slate-900 tracking-tighter uppercase italic">NEXUS<span class="text-slate-400">7101</span></h1>
             </div>
 
             <h2 class="text-3xl font-black text-slate-900 mb-2">Sign In</h2>
@@ -110,13 +112,19 @@ export function renderLogin() {
         <div class="hidden md:block absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-all duration-700 ease-in-out z-[100]" id="overlayContainer">
           <div class="relative left-[-100%] h-full w-[200%] auth-overlay-bg text-white transition-all duration-700 ease-in-out transform" id="overlay">
             <div class="absolute top-0 left-0 w-1/2 h-full flex flex-col items-center justify-center px-16 text-center" id="overlayLeft">
-              <h2 class="text-5xl font-black mb-6">Welcome!</h2>
+              <div class="w-32 h-32 flex items-center justify-center mb-8">
+                 <img src="/logo.png" class="w-full h-full object-contain filter invert brightness-200 mix-blend-screen">
+              </div>
+              <h2 class="text-5xl font-black mb-6 uppercase tracking-tighter italic">NEXUS<span class="text-white/40">7101</span></h2>
               <p class="text-white/90 text-lg mb-10">Already have an account?</p>
               <button id="toLogin" class="px-12 py-4 border-2 border-white rounded-full font-bold text-white hover:bg-white hover:text-slate-900 transition-all">Sign In</button>
             </div>
             <div class="absolute top-0 right-0 w-1/2 h-full flex flex-col items-center justify-center px-16 text-center" id="overlayRight">
-              <h2 class="text-5xl font-black mb-6">Hello!</h2>
-              <p class="text-white/90 text-lg mb-10">New here? Sign up to book your stay!</p>
+              <div class="w-32 h-32 flex items-center justify-center mb-8">
+                 <img src="/logo.png" class="w-full h-full object-contain filter invert brightness-200 mix-blend-screen">
+              </div>
+              <h2 class="text-5xl font-black mb-6 uppercase tracking-tighter italic">NEXUS<span class="text-white/40">7101</span></h2>
+              <p class="text-white/90 text-lg mb-10 font-medium tracking-wide">New here? Sign up to book your stay!</p>
               <button id="toSignup" class="px-12 py-4 border-2 border-white rounded-full font-bold text-white hover:bg-white hover:text-slate-900 transition-all">Sign Up</button>
             </div>
           </div>
@@ -395,7 +403,7 @@ export function attachLoginListeners(renderFn) {
           </div>
           <h2 class="text-3xl font-black text-slate-900 mb-2 italic tracking-tight">Request Sent!</h2>
           <p class="text-sm font-medium text-slate-500 mb-8 leading-relaxed px-4">
-            Thank you for choosing <span class="font-black text-slate-900 italic">CottageEase</span>. 
+            Thank you for choosing <span class="font-black text-slate-900 italic">NEXUS7101</span>. 
             Our team is currently verifying your ID. You'll receive an email once your account is ready!
           </p>
           <button type="button" id="backToLoginAfterSuccess" class="btn-primary py-4 px-10">

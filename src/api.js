@@ -51,3 +51,7 @@ export const admin = {
   updateAddon: (id, data) => api.patch(`/admin/addons/${id}`, data),
   deleteAddon: (id) => api.delete(`/admin/addons/${id}`)
 };
+
+export const users = {
+  updateProfile: (data) => api.put('/users/profile', data)
+};
