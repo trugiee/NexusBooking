@@ -23,8 +23,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install pdo_sqlite
 
-# Enable Apache modules and fix MPM conflict
-RUN a2dismod mpm_event && \
+# Enable Apache modules and fix MPM conflict definitively
+RUN a2dismod mpm_event mpm_worker || true && \
     a2enmod mpm_prefork && \
     a2enmod rewrite
 
