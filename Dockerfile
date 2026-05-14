@@ -6,10 +6,12 @@
 
 # --- Stage 1: Build Frontend ---
 FROM node:20-alpine AS builder
+RUN apk add --no-cache python3 make g++
 WORKDIR /app
-COPY package*.json ./
+# Copy only frontend-related files for building
+COPY frontend/package*.json ./
 RUN npm ci
-COPY . .
+COPY frontend/ ./
 RUN npm run build
 
 # --- Stage 2: PHP + Apache ---
@@ -28,7 +30,7 @@ RUN a2enmod rewrite
 COPY --from=builder /app/dist /var/www/html
 
 # Copy PHP backend → outside web root (secure)
-COPY php-server /var/www/php-server
+COPY backend/php-server /var/www/php-server
 
 # Copy .env file
 COPY .env /var/www/.env
@@ -43,8 +45,7 @@ RUN chmod +x /entrypoint.sh
 # Set permissions
 RUN chown -R www-data:www-data /var/www && \
     chmod -R 755 /var/www && \
-    mkdir -p /var/www/php-server && \
-    chmod 777 /var/www/php-server
+    chmod -R 777 /var/www/php-server
 
 EXPOSE 80
 

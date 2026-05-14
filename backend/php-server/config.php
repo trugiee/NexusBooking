@@ -13,7 +13,11 @@ function loadEnv(string $path): void {
     }
 }
 
-loadEnv(__DIR__ . '/../.env');
+if (file_exists(__DIR__ . '/../.env')) {
+    loadEnv(__DIR__ . '/../.env');
+} else {
+    loadEnv(__DIR__ . '/../../.env');
+}
 
 define('JWT_SECRET',         $_ENV['JWT_SECRET']         ?? 'your-very-secret-key');
 define('PAYMONGO_SECRET_KEY',  $_ENV['PAYMONGO_SECRET_KEY']  ?? 'sk_test_placeholder');

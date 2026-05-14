@@ -90,20 +90,6 @@ export function renderLogin() {
             </div>
             <div id="googleBtnContainer" class="w-full flex justify-center"></div>
             <p class="text-center text-sm text-slate-400">Forget your password?</p>
-            <div class="mt-4 pt-6 border-t border-slate-100 space-y-3">
-              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Quick Access</p>
-              <div class="grid grid-cols-3 gap-2">
-                <div class="bg-slate-50 p-2 rounded-xl text-center cursor-pointer hover:bg-slate-100 transition-colors" onclick="document.getElementById('emailLogin').value='customer@example.com'; document.getElementById('passLogin').value='password'">
-                  <p class="text-[9px] font-black text-slate-900 uppercase tracking-tighter">Customer</p>
-                </div>
-                <div class="bg-slate-50 p-2 rounded-xl text-center cursor-pointer hover:bg-slate-100 transition-colors" onclick="document.getElementById('emailLogin').value='admin@example.com'; document.getElementById('passLogin').value='password'">
-                  <p class="text-[9px] font-black text-slate-900 uppercase tracking-tighter">Admin</p>
-                </div>
-                <div class="bg-slate-50 p-2 rounded-xl text-center cursor-pointer hover:bg-slate-100 transition-colors" onclick="document.getElementById('emailLogin').value='inspector@example.com'; document.getElementById('passLogin').value='password'">
-                  <p class="text-[9px] font-black text-slate-900 uppercase tracking-tighter">Staff</p>
-                </div>
-              </div>
-            </div>
             <p class="md:hidden text-center text-xs text-slate-400">New here? <button type="button" id="mobileToSignupBottom" class="font-black text-slate-900 underline">Create Account</button></p>
           </form>
         </div>
@@ -142,6 +128,102 @@ export function renderLogin() {
           <button id="capturePhoto" class="flex-1 px-8 py-5 bg-rose-500 text-white font-black rounded-3xl hover:scale-105 transition-all shadow-xl shadow-rose-500/20 uppercase tracking-widest text-xs">Capture ID</button>
         </div>
         <canvas id="cameraCanvas" class="hidden"></canvas>
+      </div>
+
+      <!-- Developer Credits Modal -->
+      <div id="creditsModal" class="fixed inset-0 bg-slate-900/60 z-[300] hidden flex items-center justify-center p-4 backdrop-blur-md animate-fade-in">
+        <div class="bg-white w-full max-w-md rounded-[3rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.3)] animate-zoom-in border border-white/20">
+          
+          <!-- Premium Gradient Header -->
+          <div class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-black p-10 text-white text-center overflow-hidden">
+            <!-- Decorative Abstract Circles -->
+            <div class="absolute top-[-10%] right-[-10%] w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-[-10%] left-[-10%] w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+            
+            <button id="closeCredits" class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-white/40 hover:bg-white/10 hover:text-white transition-all z-10">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+
+            <div class="relative inline-block mb-6">
+              <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
+                <img src="/logo.png" class="w-12 h-12 object-contain p-1">
+              </div>
+              <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center border-4 border-slate-900 shadow-lg">
+                <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+              </div>
+            </div>
+
+            <h3 class="text-3xl font-black italic tracking-tighter uppercase leading-none">NEXUS<span class="text-white/30">7101</span></h3>
+            <div class="flex items-center justify-center gap-2 mt-2">
+              <div class="h-px w-8 bg-white/10"></div>
+              <p class="text-[9px] font-black text-emerald-400 uppercase tracking-[0.4em] italic">Development Team</p>
+              <div class="h-px w-8 bg-white/10"></div>
+            </div>
+          </div>
+
+          <!-- Team List with Hover Interactions -->
+          <div class="p-10 space-y-2">
+            
+            <!-- Developer Row Template -->
+            <div class="group flex items-center gap-5 p-4 rounded-[2rem] hover:bg-slate-50 transition-all duration-300 cursor-default border border-transparent hover:border-slate-100">
+              <div class="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg shadow-slate-900/10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Frontend / Backend</p>
+                <p class="text-base font-black text-slate-900 group-hover:text-emerald-600 transition-colors">TRUDGE INSONG</p>
+              </div>
+            </div>
+
+            <div class="group flex items-center gap-5 p-4 rounded-[2rem] hover:bg-slate-50 transition-all duration-300 cursor-default border border-transparent hover:border-slate-100">
+              <div class="w-12 h-12 bg-slate-100 text-slate-900 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500 border border-slate-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Project Manager</p>
+                <p class="text-base font-black text-slate-900 group-hover:text-emerald-600 transition-colors">APRIL GRACE LARANJO</p>
+              </div>
+            </div>
+
+            <div class="group flex items-center gap-5 p-4 rounded-[2rem] hover:bg-slate-50 transition-all duration-300 cursor-default border border-transparent hover:border-slate-100">
+              <div class="w-12 h-12 bg-slate-100 text-slate-900 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 border border-slate-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Deployment</p>
+                <p class="text-base font-black text-slate-900 group-hover:text-emerald-600 transition-colors">CHERRY MAE LIMBAGA</p>
+              </div>
+            </div>
+
+            <div class="group flex items-center gap-5 p-4 rounded-[2rem] hover:bg-slate-50 transition-all duration-300 cursor-default border border-transparent hover:border-slate-100">
+              <div class="w-12 h-12 bg-slate-100 text-slate-900 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500 border border-slate-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Documentation</p>
+                <p class="text-base font-black text-slate-900 group-hover:text-emerald-600 transition-colors">LANCE ENARDICIDO</p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="p-8 bg-slate-50 text-center border-t border-slate-100">
+            <p class="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] leading-relaxed">
+              Crafted with Excellence <br> 
+              <span class="text-slate-900">© 2026 NEXUS7101 Digital</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Powered By Footer -->
+      <div class="fixed bottom-6 left-0 right-0 flex justify-center z-50">
+        <button id="openCredits" class="group flex items-center gap-2 px-4 py-2 bg-white/50 backdrop-blur-md border border-white/20 rounded-full shadow-lg hover:bg-white transition-all hover:scale-105 active:scale-95">
+          <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest group-hover:text-slate-900 transition-colors">Powered by</span>
+          <span class="text-[10px] font-black text-slate-900 uppercase italic tracking-tighter">NEXUS<span class="text-slate-400">7101</span> Team</span>
+        </button>
       </div>
     </div>
   `;
@@ -421,4 +503,21 @@ export function attachLoginListeners(renderFn) {
       alert(err.response?.data?.error || "Registration failed!");
     }
   };
+
+  // Developer Credits Logic
+  const openCredits = document.getElementById('openCredits');
+  const closeCredits = document.getElementById('closeCredits');
+  const creditsModal = document.getElementById('creditsModal');
+
+  if (openCredits && creditsModal) {
+    openCredits.onclick = () => creditsModal.classList.remove('hidden');
+  }
+  if (closeCredits && creditsModal) {
+    closeCredits.onclick = () => creditsModal.classList.add('hidden');
+  }
+  if (creditsModal) {
+    creditsModal.onclick = (e) => {
+      if (e.target === creditsModal) creditsModal.classList.add('hidden');
+    };
+  }
 }
