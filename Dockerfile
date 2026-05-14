@@ -23,10 +23,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install pdo_sqlite
 
-# Enable Apache modules and fix MPM conflict definitively
-RUN a2dismod mpm_event mpm_worker || true && \
+# Remove all default MPMs and enable only mpm_prefork
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf && \
     a2enmod mpm_prefork && \
-    a2enmod rewrite
+    a2enmod rewrite && \
+    a2enmod php8.3
 
 # Copy built Vite frontend → Apache web root
 COPY --from=builder /app/dist /var/www/html
