@@ -23,16 +23,19 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install pdo_sqlite
 
-# Remove all default MPMs and enable only mpm_prefork
-RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf && \
+# Disable conflicting MPMs at the source (mods-available) so that no
+# re-enable path can bring them back.  We comment out the LoadModule
+# directive in mods-available — the canonical location — rather than
+# chasing symlinks in mods-enabled that may or may not exist.
+RUN sed -i 's/^LoadModule mpm_event/#LoadModule mpm_event/' \
+        /etc/apache2/mods-available/mpm_event.load && \
+    sed -i 's/^LoadModule mpm_worker/#LoadModule mpm_worker/' \
+        /etc/apache2/mods-available/mpm_worker.load && \
+    # Remove any existing MPM symlinks from mods-enabled, then enable only prefork
+    rm -f /etc/apache2/mods-enabled/mpm_*.load \
+          /etc/apache2/mods-enabled/mpm_*.conf && \
     a2enmod mpm_prefork && \
     a2enmod rewrite
-
-# Explicitly disable conflicting MPMs at the config level — the base image
-# loads mpm_event/mpm_worker at a deeper level that symlink removal alone
-# cannot prevent. Commenting out their LoadModule directives ensures only
-# mpm_prefork is active when Apache starts.
-RUN sed -i 's/^LoadModule/#LoadModule/' /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_worker.load 2>/dev/null || true
 
 # Copy built Vite frontend → Apache web root
 COPY --from=builder /app/dist /var/www/html
