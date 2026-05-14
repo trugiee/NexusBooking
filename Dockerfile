@@ -32,9 +32,6 @@ COPY --from=builder /app/dist /var/www/html
 # Copy PHP backend → outside web root (secure)
 COPY backend/php-server /var/www/php-server
 
-# Copy .env file
-COPY .env /var/www/.env
-
 # Copy Apache config
 COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
 
