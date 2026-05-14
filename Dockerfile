@@ -28,6 +28,12 @@ RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.c
     a2enmod mpm_prefork && \
     a2enmod rewrite
 
+# Explicitly disable conflicting MPMs at the config level — the base image
+# loads mpm_event/mpm_worker at a deeper level that symlink removal alone
+# cannot prevent. Commenting out their LoadModule directives ensures only
+# mpm_prefork is active when Apache starts.
+RUN sed -i 's/^LoadModule/#LoadModule/' /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_worker.load 2>/dev/null || true
+
 # Copy built Vite frontend → Apache web root
 COPY --from=builder /app/dist /var/www/html
 
