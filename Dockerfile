@@ -26,8 +26,7 @@ RUN apt-get update && apt-get install -y \
 # Remove all default MPMs and enable only mpm_prefork
 RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf && \
     a2enmod mpm_prefork && \
-    a2enmod rewrite && \
-    a2enmod php8.3
+    a2enmod rewrite
 
 # Copy built Vite frontend → Apache web root
 COPY --from=builder /app/dist /var/www/html
